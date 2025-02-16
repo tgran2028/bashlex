@@ -1,11 +1,11 @@
 from __future__ import print_function
 
-import sys
-
 import argparse
+import sys
 from argparse import RawTextHelpFormatter
 
-from bashlex import parser, ast
+from bashlex import ast, parser
+
 
 class nodevisitor(ast.nodevisitor):
     def __init__(self, positions):
@@ -18,7 +18,8 @@ class nodevisitor(ast.nodevisitor):
         # do not recurse into child nodes
         return False
 
-desc = '''replace all occurrences of $() and `` with the string given in -s
+
+desc = """replace all occurrences of $() and `` with the string given in -s
 
   $ commandsubstitution-remover.py -s nope -c 'foo $(bar)'
   foo nope
@@ -35,19 +36,25 @@ but not within single quotes, since they cancel special meaning:
 
 (this a simple script to demonstrate how to traverse the ast produced
 by bashlex)
-'''
+"""
 
-if __name__ == '__main__':
-    argparser = argparse.ArgumentParser(description=desc,
-                                        formatter_class=RawTextHelpFormatter)
-    argparser.add_argument('-s', dest='replacement', metavar='S', default='XXX',
-                           help='replace occurrences with S (default: XXX)')
+if __name__ == "__main__":
+    argparser = argparse.ArgumentParser(
+        description=desc, formatter_class=RawTextHelpFormatter
+    )
+    argparser.add_argument(
+        "-s",
+        dest="replacement",
+        metavar="S",
+        default="XXX",
+        help="replace occurrences with S (default: XXX)",
+    )
 
     group = argparser.add_mutually_exclusive_group()
-    group.add_argument('file', metavar='file', type=file, nargs='?',
-                       help='file to parse')
-    group.add_argument('-c', dest='expression',
-                       help='string to parse')
+    group.add_argument(
+        "file", metavar="file", type=file, nargs="?", help="file to parse"
+    )
+    group.add_argument("-c", dest="expression", help="string to parse")
 
     args = argparser.parse_args()
 
@@ -74,4 +81,4 @@ if __name__ == '__main__':
         # with the replacement string
         postprocessed[start:end] = args.replacement
 
-    print(''.join(postprocessed))
+    print("".join(postprocessed))
